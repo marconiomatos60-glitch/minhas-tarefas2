@@ -1,0 +1,125 @@
+<header class="topbar">
+  <h1>Minhas Tarefas</h1>
+</header>
+
+<section class="container">
+  <div class="saudacao-box">
+    <h2>Bom dia! 👋</h2>
+    <p class="data-texto">{{ dataAtualTexto }}</p>
+  </div>
+
+  <article class="card progresso-card">
+    <div class="progresso-topo">
+      <div>
+        <h3>Seu progresso</h3>
+        <p>Continue assim!</p>
+      </div>
+      <span class="progresso-valor">{{ percentualProgresso }}%</span>
+    </div>
+    <div class="barra-fundo">
+      <div class="barra-preenchida" [style.width.%]="percentualProgresso"></div>
+    </div>
+  </article>
+
+  <div class="categorias-row" role="group" aria-label="Categorias de tarefas">
+    <button
+      type="button"
+      class="chip-btn"
+      *ngFor="let cat of categorias"
+      [class.chip-ativo]="categoriaSelecionada === cat"
+      (click)="selecionarCategoria(cat)">
+      <span>{{ cat }}</span>
+      <span *ngIf="cat !== 'Todas'" class="chip-add">+</span>
+    </button>
+  </div>
+
+  <article *ngIf="categoriaSelecionada !== 'Todas' && caixaAberta" class="card nova-tarefa-card">
+    <div class="nova-tarefa-header">
+      <span>Nova tarefa em <strong>{{ categoriaSelecionada }}</strong></span>
+      <button type="button" class="btn-link" (click)="fecharCaixa()">Fechar</button>
+    </div>
+
+    <div class="nova-tarefa-form">
+      <input
+        type="text"
+        class="input-texto"
+        [(ngModel)]="novaTarefaTitulo"
+        [placeholder]="'Digite a tarefa de ' + categoriaSelecionada + '...'"
+        (keyup.enter)="adicionarTarefa()" />
+
+      <select
+        class="select-prioridade"
+        [(ngModel)]="novaTarefaPrioridade"
+        aria-label="Prioridade da tarefa">
+        <option value="Alta">Alta</option>
+        <option value="Média">Média</option>
+        <option value="Baixa">Baixa</option>
+      </select>
+
+      <button type="button" class="btn-primario" (click)="adicionarTarefa()">
+        Adicionar
+      </button>
+    </div>
+  </article>
+
+  <section class="secao">
+    <h3>⭐ Foco Principal</h3>
+    <article class="card lista-card">
+      <ul class="lista-itens">
+        <li *ngFor="let item of focoPrincipal" class="item-linha">
+          <label class="item-check-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="item.concluida"
+              (change)="aoAlterarStatus()" />
+            <span [class.tarefa-concluida]="item.concluida">{{ item.titulo }}</span>
+          </label>
+          <span *ngIf="item.prioritario" class="badge badge-alta">Prioritário</span>
+        </li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="secao">
+    <h3>
+      Minhas atividades
+      <span *ngIf="categoriaSelecionada !== 'Todas'" class="filtro-tag">
+        ({{ categoriaSelecionada }})
+      </span>
+    </h3>
+
+    <article class="card lista-card">
+      <ul class="lista-itens">
+        <li *ngFor="let tarefa of atividadesFiltradas" class="item-linha">
+          <label class="item-check-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="tarefa.concluida"
+              (change)="aoAlterarStatus()" />
+            <div [class.tarefa-concluida]="tarefa.concluida">
+              <div class="tarefa-titulo">{{ tarefa.titulo }}</div>
+              <div class="tarefa-meta">{{ tarefa.categoria }} · {{ tarefa.prioridade }}</div>
+            </div>
+          </label>
+
+          <div class="item-acoes">
+            <span class="badge" [ngClass]="getClassePrioridade(tarefa.prioridade)">
+              {{ tarefa.prioridade }}
+            </span>
+            <button
+              type="button"
+              class="btn-remover"
+              (click)="removerTarefa(tarefa.id)"
+              [attr.aria-label]="'Remover ' + tarefa.titulo">
+              Remover
+            </button>
+          </div>
+        </li>
+
+        <li *ngIf="atividadesFiltradas.length === 0" class="item-vazio">
+          Nenhuma tarefa cadastrada em {{ categoriaSelecionada }}.
+        </li>
+      </ul>
+    </article>
+  </section>
+</section>
