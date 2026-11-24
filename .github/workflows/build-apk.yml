@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Baixar código do repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configurar Node.js 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
 
@@ -28,18 +28,15 @@ jobs:
       - name: Instalar dependências do projeto
         run: npm install --no-audit --no-fund
 
-      - name: Garantir permissão de execução nos binários locais
-        run: chmod -R +x node_modules/.bin
-
       - name: Compilar projeto web (Angular/Ionic)
-        run: ./node_modules/.bin/ng build --configuration production
+        run: npx ng build --configuration production
 
       - name: Garantir plataforma Android e sincronizar Capacitor
         run: |
           if [ ! -d "android" ]; then
-            ./node_modules/.bin/cap add android
+            npx cap add android
           fi
-          ./node_modules/.bin/cap sync android
+          npx cap sync android
 
       - name: Dar permissão ao gradlew e compilar APK
         run: |
