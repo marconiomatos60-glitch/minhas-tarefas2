@@ -31,6 +31,13 @@ jobs:
       - name: Compilar projeto web (Angular/Ionic)
         run: npx ng build --configuration production
 
+      - name: Garantir index.html na raiz de ./www para o Capacitor
+        run: |
+          if [ ! -f "www/index.html" ] && [ -f "www/browser/index.html" ]; then
+            cp -r www/browser/* www/
+          fi
+          ls -la www
+
       - name: Garantir plataforma Android e sincronizar Capacitor
         run: |
           if [ ! -d "android" ]; then
